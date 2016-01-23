@@ -202,7 +202,7 @@ class MainApp : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainApp(QString filepath,vector<QString> u,vector<Log>l,QString video, QWidget *parent = 0);
+    explicit MainApp(QString filepath, QString video, QWidget *parent = 0);
     ~MainApp();
 
     //layouts
@@ -242,7 +242,7 @@ public:
 
     //functions
     void loadHeader();
-    void loadMenu();
+    void setUpTimelineBox();
     void loadCategories();
     void loadWidgets();
     void loadVideos();
@@ -358,6 +358,7 @@ public slots:
     void setColor(QString s);
     void setColorLabel();
     void countData();
+    void setUpTimeline();
     void refreshPoints();
 
     void Listener();

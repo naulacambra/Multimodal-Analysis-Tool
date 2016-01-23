@@ -7,13 +7,11 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-//    Loader loader;
-//    loader.show();
 
-    vector<QString> users;
-    vector<Log> log;
+    QString filepath = "";
+    QString videopath = "";
 
-    MainApp * app = new MainApp("", users, log, "");
+    MainApp * app = new MainApp(filepath, videopath);
     app->show();
 
     return a.exec();

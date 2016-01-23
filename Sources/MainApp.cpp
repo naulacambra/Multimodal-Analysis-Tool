@@ -3,9 +3,6 @@
 #include "Headers/clickablelabel.h"
 #include "Headers/menu.h"
 #include "Headers/definevisualization.h"
-//#include "glwidget.h"
-//#include <GLUT/glut.h>
-
 
 GLwidget::GLwidget(class MainApp *v, vector<QString> users,vector<Log> log, int i,int s,QWidget *parent) :
     QWidget(parent)
@@ -85,7 +82,6 @@ void GLwidget::setColorMap(){
         if(h > 1) h=1.0;
     }
 }
-
 
 void GLwidget::getHeatMapData(){
 
@@ -205,7 +201,6 @@ void GLwidget::loadData(){
 
     }   
 }
-
 
 void GLwidget::getMaxVal(){
 
@@ -520,59 +515,37 @@ void GLwidget::addNote(){
 
 /////////// MainApp /////////
 
+MainApp::MainApp(QString filepath, QString videopath, QWidget *parent) : QMainWindow(parent), ui(new Ui::MainApp) {
+    this->filepath = filepath;
+    this->videopath = videopath;
+    this->users = vector<QString>();
+    this->log = vector<Log>();
+    this->category_load = false;
 
-MainApp::MainApp(QString filepath, vector<QString> users, vector<Log> log, QString videopath, QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainApp)
-{
-
+    /*Window set up*/
     this->setWindowState(Qt::WindowMaximized);
+    ui->setupUi(this);
 
+    /*Timer set up*/
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(Listener()));
     timer->start();
 
-    ui->setupUi(this);
-
-    this->filepath = filepath;
-    this->videopath = videopath;
-    this->users = users;
-    this->log = log;
-
-    this->category_load = false;
-
-    //loadHeader();
-
     countData();
 
-    if(total_datos == 0){
-        degrees = 0;
-        h=0;
-        s=1;
-        v=1;
+    if( this->total_datos == 0 ){
+        this->degrees = 0;
+        this->h = 0;
     } else {
-        degrees = 360/total_datos;
-        h=degrees/360;
-        s=1;
-        v=1;
+        this->degrees = 360 / this->total_datos;
+        this->h = this->degrees / 360;
     }
 
-    scroll_linea_temporal = new QScrollArea();
-    scroll_linea_temporal->setWidgetResizable(true);
-    //scroll_linea_temporal->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scroll_linea_temporal->setFixedHeight(this->height()/3);
-    scroll_linea_temporal->setFixedWidth(this->width());
-    scroll_linea_temporal->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    setScrollStyle(scroll_linea_temporal);
+    this->s=1;
+    this->v=1;
 
-    //w = new QWidget();
-    p = new QVBoxLayout();    
-    //w->setLayout(p);
-
-    Box_timeline = new QGroupBox();
-    Box_timeline->setLayout(p);
-
-    loadMenu();
+    this->setUpTimelineBox();
+    this->setUpTimeline();
 
     scroll_linea_temporal->setWidget(Box_timeline);
     ui->horizontalLayout_2->addWidget(scroll_linea_temporal);
@@ -649,32 +622,30 @@ void MainApp::loadHeader(){
 
 }
 
-void MainApp::loadMenu(){
-
+void MainApp::setUpTimelineBox(){
     mapper_minslider = new QSignalMapper();
     mapper_maxslider = new QSignalMapper();
 
-    QLabel *t = new QLabel("Timeline");
-    t->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
-
-    p->addWidget(t);
+    QLabel *timelineLabel = new QLabel("Timeline");
+    timelineLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    p->addWidget( timelineLabel );
 
     grid_timeline = new QGridLayout();
-    p->addLayout(grid_timeline);
+    p->addLayout( grid_timeline );
 
     QLabel *label = new QLabel("Start: 0");
-    label->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QSlider *slider = new QSlider();
     slider->setOrientation(Qt::Horizontal);
     slider->setMaximum(10);
-    slider->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    slider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     QLabel *label2 = new QLabel("End: 0");
-    label2->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    label2->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QSlider *slider2 = new QSlider();
     slider2->setOrientation(Qt::Horizontal);
     slider2->setMaximum(10);
-    slider2->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    slider2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     min_sliders.push_back(slider);
     max_sliders.push_back(slider2);
@@ -689,25 +660,9 @@ void MainApp::loadMenu(){
     connect(slider2, SIGNAL(valueChanged(int)), mapper_maxslider, SLOT(map()));
     mapper_maxslider->setMapping(slider2, 0);
 
-
-//    for(int i=0; i< 15;i++){
-//        QString name = QString::number(i) + " - " + QString::number(i+1);
-//        QLabel *t = new QLabel(name);
-//        t->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-//        QLabel *l = new QLabel();
-//        l->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-//        l->setAutoFillBackground(true);
-//        l->setFixedWidth(this->width()/30);
-//        //grid_timeline->setColumnMinimumWidth(i,5);
-//        grid_timeline->setColumnStretch(i,10);
-//        grid_timeline->addWidget(t,1,i,1,4);
-//        grid_timeline->addWidget(l,2,3,1,4);
-//        l->setPalette(Qt::red);
-//    }
-
     //Prueba de linea temporal
 
-    if(players.size()>0){        
+   if( players.size() > 0 ){
 
         int timeline_range = ceil((float)players[0]->duration()/1000 );
 
@@ -731,7 +686,7 @@ void MainApp::loadMenu(){
                 grid_timeline->setColumnStretch(i,10);
             }
 
-        }        
+        }
 
         int min,max,value;
 
@@ -815,60 +770,57 @@ void MainApp::loadMenu(){
 
     connect(mapper_minslider, SIGNAL(mapped(int)), this, SLOT(setMinTimestamp(int)));
     connect(mapper_maxslider, SIGNAL(mapped(int)), this, SLOT(setMaxTimestamp(int)));
-
-    //qDebug() << "--------------";
-
 }
 
 void MainApp::loadCategories(){
 
     colorMapper = new QSignalMapper();
 
-    QLabel *t = new QLabel("Categories");
-    t->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
-    m1->addWidget(t);
+    QLabel *categoriesLabel = new QLabel("Categories");
+    categoriesLabel->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
+    m1->addWidget( categoriesLabel );
 
     grid_category = new QGridLayout();
     grid_category_ctrls = new QGridLayout();
     m1->addLayout(grid_category);
     m1->addLayout(grid_category_ctrls);
 
-    int cont = 0;
+//    int cont = 0;
 
     //recorrer numero de categorias creadas (creada en un vector qLabel y QCheckbox)
     for(unsigned int j=0; j < categories.size(); j++){
 
         //Colores
-        QLabel *cpicker = new QLabel();
-        cpicker->setAutoFillBackground(true);
-        cpicker->setPalette(colors[j]);
-        cpicker->setFixedWidth(20);
-        cpicker->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+        QLabel *categoryColor = new QLabel();
+        categoryColor->setAutoFillBackground(true);
+        categoryColor->setPalette(colors[j]);
+        categoryColor->setFixedWidth(20);
+        categoryColor->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
         //Labels
-        QLabel *l = new QLabel();
-        l->setText(categories[j]);
+        QLabel *categoryLabel = new QLabel();
+        categoryLabel->setText( categories[ j ] );
 
-        QCheckBox *c = new QCheckBox();
+        QCheckBox *categoryCheckBox = new QCheckBox();
 
-        if((unsigned int)this->index_check_color == j) {
-            c->setChecked(true);
+        if( ( unsigned int ) this->index_check_color == j ) {
+            categoryCheckBox->setChecked( true );
         } else {
-            c->setChecked(false);
+            categoryCheckBox->setChecked( false );
         }
-        cpickers.push_back(c);
+        this->cpickers.push_back( categoryCheckBox );
 
         //Mapper
-        connect(c, SIGNAL(clicked(bool)), colorMapper, SLOT(map()));
-        QString data_map = QString::number(0) + "_" + QString::number(j);
-        colorMapper->setMapping(c, data_map);
+        connect( categoryCheckBox, SIGNAL( clicked( bool ) ), colorMapper, SLOT( map() ) );
+        QString data_map = QString::number( 0 ) + "_" + QString::number( j );
+        colorMapper->setMapping(categoryCheckBox, data_map);
 
         //Añadimos al grid
-        grid_category->addWidget(cpicker,cont+1,1,1,1);
-        grid_category->addWidget(l,cont+1,2,1,1);
-        grid_category->addWidget(c,cont+1,3,1,1);
+        grid_category->addWidget(categoryColor, j+1, 1, 1, 1);
+        grid_category->addWidget(categoryLabel, j+1, 2, 1, 1);
+        grid_category->addWidget(categoryCheckBox, j+1, 3, 1, 1);
 
-        ++cont;
+//        ++cont;
     }
 
     save_categories = new QPushButton("Save");
@@ -897,48 +849,12 @@ void MainApp::loadCategories(){
 
 void MainApp::loadWidgets(){
 
-    //int col = 0;
-    //int row = 0;
-
     if(total_datos == 0) maxTimestamp = 10;
     else maxTimestamp = getMaxTimestamp(0);
 
     GLwidget *g = new GLwidget(this,users,log,0,1);
-//    g->setAutoFillBackground(true);
-//    g->setPalette(Qt::red);
+
     gl.push_back(g);
-
-//    QLabel *label = new QLabel("Start: 0");
-//    label->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-//    QSlider *slider = new QSlider();
-//    slider->setOrientation(Qt::Horizontal);
-//    slider->setMaximum(maxTimestamp);
-//    slider->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-
-//    QLabel *label2 = new QLabel("End: 0");
-//    label2->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-//    QSlider *slider2 = new QSlider();
-//    slider2->setOrientation(Qt::Horizontal);
-//    slider2->setMaximum(maxTimestamp);
-//    slider2->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-
-//    min_sliders.push_back(slider);
-//    max_sliders.push_back(slider2);
-
-//    min_label.push_back(label);
-//    max_label.push_back(label2);
-
-//    //Mapper
-//    connect(slider, SIGNAL(valueChanged(int)), mapper_minslider, SLOT(map()));
-//    mapper_minslider->setMapping(slider, 0);
-
-//    connect(slider2, SIGNAL(valueChanged(int)), mapper_maxslider, SLOT(map()));
-//    mapper_maxslider->setMapping(slider2, 0);
-
-
-    //g->setMinimumSize(300,300);
-
-    //col = 0;
 
     QLabel *t = new QLabel("Data");
     t->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
@@ -958,22 +874,16 @@ void MainApp::loadWidgets(){
     grid->addWidget(datavisualization,5,2,1,1);
     grid->addWidget(datatimer,5,4,1,1);
     grid->addWidget(g,5+1,1,1,4);
-//    grid->addWidget(label,5+2,1,1,4);
-//    grid->addWidget(slider,5+3,1,1,4);
-//    grid->addWidget(label2,5+4,1,1,4);
-//    grid->addWidget(slider2,5+5,1,1,4);
 
     connect(dataloader, SIGNAL(clicked()), this, SLOT(LoadData()));
     connect(datavisualization, SIGNAL(clicked()), this, SLOT(DefineVis()));
-//    connect(mapper_minslider, SIGNAL(mapped(int)), this, SLOT(setMinTimestamp(int)));
-//    connect(mapper_maxslider, SIGNAL(mapped(int)), this, SLOT(setMaxTimestamp(int)));
 }
 
 void MainApp::loadVideos(){
 
     scroll_video = new QScrollArea();
     scroll_video->setWidgetResizable(true);
-    scroll_video->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scroll_video->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 //    scroll_video->setFixedHeight(this->height()/1.5);
 //    scroll_video->setFixedWidth(this->width()/2);
     scroll_video->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -1001,23 +911,19 @@ void MainApp::loadVideos(){
 
     player = new QMediaPlayer;
 
-    QPushButton *p = new QPushButton("Play");
-    p->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
+    QPushButton *playPauseButton = new QPushButton("Play");
+    playPauseButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     QPushButton *stop = new QPushButton("Stop");
-    stop->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
+    stop->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     QSlider *volume = new QSlider();
     volume->setOrientation(Qt::Horizontal);
     volume->setValue(100);
-    volume->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
+    volume->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-    setButtonStyle_ok(p);
+    setButtonStyle_ok(playPauseButton);
     setButtonStyle_cancel(stop);
-
-//    customslider *spin = new customslider();
-//    spin->setOrientation(Qt::Horizontal);
-//    spin->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
 
     QVideoWidget *videowidget = new QVideoWidget();
     videowidget->setFixedHeight(this->height()/1.5);
@@ -1033,15 +939,15 @@ void MainApp::loadVideos(){
     item->setTransform(QTransform::fromScale(1.85,2.01), true);
     scene->addItem(item);
 
-    video = new videodrawer(this,view);
+    video = new videodrawer(this, view);
     video->player = player;
 
     QLabel *t = new QLabel("Video");
-    t->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
+    t->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
 
     videoloader = new QPushButton("Load Video");
-    videoloader->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
+    videoloader->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     setButtonStyle_ok(videoloader);
 
@@ -1053,7 +959,7 @@ void MainApp::loadVideos(){
     grid1->addWidget(videotimer,3+1,4,1,1);
     grid1->addWidget(view,3+2,1,1,4);
     grid1->addWidget(video,3+2,1,1,4);
-    grid1->addWidget(p,3+3,1,1,1);
+    grid1->addWidget(playPauseButton, 3+3, 1, 1, 1);
     grid1->addWidget(stop,3+3,2,1,1);
     grid1->addWidget(volume,3+3,4,1,1);
 
@@ -1065,13 +971,12 @@ void MainApp::loadVideos(){
 
     videos.push_back(video);
 
-
     players.push_back(player);
-    pause.push_back(p);
+    pause.push_back(playPauseButton);
     //frames.push_back(spin);
 
-    connect(p, SIGNAL(clicked(bool)), pause_mapper, SLOT(map()));
-    pause_mapper->setMapping(p, 0);
+    connect(playPauseButton, SIGNAL(clicked(bool)), pause_mapper, SLOT(map()));
+    pause_mapper->setMapping(playPauseButton, 0);
 
 //    connect(spin, SIGNAL(valueChanged(int)), frame_mapper, SLOT(map()));
 //    frame_mapper->setMapping(spin, 0);
@@ -1087,7 +992,6 @@ void MainApp::loadVideos(){
 
     scroll_video->setWidget(Box_video);
     ui->horizontalLayout_1->addWidget(scroll_video);
-
 }
 
 void MainApp::setVolume(int val){
@@ -1220,7 +1124,7 @@ void MainApp::LoadCategory(){
         loadCategories();
 
         category_load = true;
-        loadMenu();
+        this->setUpTimelineBox();
     }    
 }
 
@@ -1286,7 +1190,6 @@ void MainApp::loadCategoryLog(QString path){
     }
 }
 
-
 void MainApp::showUser(int i){
 
 
@@ -1319,7 +1222,6 @@ void MainApp::showLines(QString s){
         gl[0]->update();
     }
 }
-
 
 void MainApp::showPoints(QString s){
 
@@ -1502,8 +1404,7 @@ void MainApp::PauseVideo(int i){
         max_label.clear();
         removeLayout(grid_timeline);
         removeLayout(p);
-        loadMenu();
-
+        this->setUpTimelineBox();
 
         if(players[0]->duration() > 300000 ){
             min_sliders[0]->setMaximum(player->duration()/1000);
@@ -1515,7 +1416,6 @@ void MainApp::PauseVideo(int i){
 
     }
 }
-
 
 void MainApp::StopVideo(int i){
    pause[i]->setText("Play");
@@ -1530,7 +1430,6 @@ void MainApp::updateFrame(int i){
     //qDebug() << QSlider::TicksAbove;
     //frames[i]->setTickPosition(QSlider::TicksRight);
 }
-
 
 void MainApp::setColorLabel(){
 
@@ -1581,7 +1480,6 @@ void MainApp::setColor(QString s){
     //loadCategories();
 }
 
-
 void MainApp::removeLayout(QVBoxLayout *area){
 
     QLayoutItem * item;
@@ -1601,7 +1499,6 @@ void MainApp::removeLayout(QGridLayout *area){
         else {delete item;}
     }
 }
-
 
 void MainApp::refreshPoints()
 {
@@ -1671,7 +1568,7 @@ void MainApp::LoadVideo(){
         max_label.clear();
         removeLayout(grid_timeline);
         removeLayout(p);
-        loadMenu();
+        this->setUpTimelineBox();
 
         //player->play();
     }
@@ -1679,7 +1576,6 @@ void MainApp::LoadVideo(){
     if(filename!="") QMessageBox::information(NULL,"Carga correcta","Video loaded");
     else QMessageBox::information(NULL,"Error","No video loaded");
 }
-
 
 void MainApp::LoadData(){
 
@@ -1715,17 +1611,30 @@ void MainApp::DefineVis(){
 }
 
 void MainApp::countData(){
-
-    total_datos = 0;
-
-    for (unsigned int i=0; i < this->users.size(); i++){
-        events = getEvents(this->users[i],log);
-        for(unsigned int j=0; j < events.size(); j++){
-            ++total_datos;
-        }
+    this->total_datos = 0;
+    for(vector<QString>::iterator user = this->users.begin(); user != this->users.end(); ++user){
+        this->events = getEvents(*user, this->log);
+        this->total_datos += this->events.size();
     }
 }
 
+void MainApp::setUpTimeline(){
+    this->scroll_linea_temporal = new QScrollArea();
+    this->scroll_linea_temporal->setWidgetResizable(true);
+    //this->scroll_linea_temporal->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->scroll_linea_temporal->setFixedHeight(this->height()/3);
+    this->scroll_linea_temporal->setFixedWidth(this->width());
+//    this->scroll_linea_temporal->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    this->scroll_linea_temporal->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setScrollStyle(this->scroll_linea_temporal);
+
+    //w = new QWidget();
+    this->p = new QVBoxLayout();
+    //w->setLayout(p);
+
+    this->Box_timeline = new QGroupBox();
+    this->Box_timeline->setLayout(p);
+}
 
 void MainApp::Listener(){
 
@@ -1807,7 +1716,7 @@ void MainApp::updateLog(float t,float x,float y,QString text){
    max_label.clear();
    removeLayout(grid_timeline);
    removeLayout(p);
-   loadMenu();
+   this->setUpTimelineBox();
 
    if(players[0]->duration() > 300000 ){
       min_sliders[0]->setMaximum(player->duration()/1000);
@@ -1821,7 +1730,6 @@ void MainApp::updateLog(float t,float x,float y,QString text){
 
 
 }
-
 
 void MainApp::updateLogGL(float t,float x,float y,QString text){
 
@@ -1858,9 +1766,7 @@ void MainApp::updateLogGL(float t,float x,float y,QString text){
     max_label.clear();
     removeLayout(grid_timeline);
     removeLayout(p);
-    loadMenu();
-
-
+    this->setUpTimelineBox();
 
     if(players[0]->duration() > 300000 ){
        min_sliders[0]->setMaximum(player->duration()/1000);
@@ -1871,10 +1777,7 @@ void MainApp::updateLogGL(float t,float x,float y,QString text){
         max_sliders[0]->setMaximum(player->duration());
         max_sliders[0]->setValue(player->position());
     }
-
-
 }
-
 
 videodrawer::videodrawer(class MainApp *v,QWidget *parent) :
     QWidget(parent)
@@ -1887,7 +1790,6 @@ videodrawer::videodrawer(class MainApp *v,QWidget *parent) :
     maxTimestamp = 0;
     minTimestamp = 0;
 }
-
 
 void videodrawer::mousePressEvent( QMouseEvent *event )
 {
@@ -1914,7 +1816,7 @@ void videodrawer::mousePressEvent( QMouseEvent *event )
 
 }
 
-void videodrawer::paintEvent(QPaintEvent *e)
+void videodrawer::paintEvent(QPaintEvent *event)
 {
 
     QPainter painter(this);
@@ -1956,7 +1858,6 @@ void videodrawer::paintEvent(QPaintEvent *e)
 
     }
 }
-
 
 void videodrawer::showPopUp(){
 

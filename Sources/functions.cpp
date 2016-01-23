@@ -51,23 +51,29 @@ vector<QString> getUsers(vector<Log>l){
     return result;
 }
 
-vector<QString> getEvents(QString user,vector<Log>l){
+vector<QString> getEvents(QString user, vector<Log> logs){
 
-    vector<QString> result;
+    set<QString> result;
 
-    for(unsigned int i=0;i<l.size();i++){
-        QString u = l[i].getUser();
-        if(user == u){
-            QString s = l[i].getEvent();
-
-            if (!(std::find(result.begin(), result.end(), s ) != result.end()))
-            {
-              // Añadimos los elementos una única vez
-              result.push_back(s);
-            }
+     for(vector<Log>::iterator log = logs.begin(); log != logs.end(); ++log){
+        if( user == (*log).getUser() ){
+            result.insert( (*log).getEvent() );
         }
-    }
-    return result;
+     }
+
+     return vector<QString>( result.begin(), result.end() );
+//    for(unsigned int i=0; i < l.size(); i++){
+////        QString u = l[i].getUser();
+//        if(user == l[i].getUser()){
+//            QString s = l[i].getEvent();
+//            if (!(std::find(result.begin(), result.end(), s ) != result.end()))
+//            {
+//              // Añadimos los elementos una única vez
+//              result.push_back(s);
+//            }
+//        }
+//    }
+//    return result;
 }
 
 Puntos getFeatures(QString user,QString event,vector<Log>l){
