@@ -7,14 +7,14 @@
 //#include <GLUT/glut.h>
 
 
-GLwidget::GLwidget(class MainApp *v, vector<QString> u,vector<Log>l,int i,int s,QWidget *parent) :
+GLwidget::GLwidget(class MainApp *v, vector<QString> users,vector<Log> log, int i,int s,QWidget *parent) :
     QWidget(parent)
 {
     setMouseTracking(true);
     index_note = -1;
 
-    users = u;
-    log = l;
+    this->users = users;
+    this->log = log;
     index = i;
     screens = s;
 
@@ -26,10 +26,9 @@ GLwidget::GLwidget(class MainApp *v, vector<QString> u,vector<Log>l,int i,int s,
     draw_background = false;
     background_path = "";    
 
-    for(int j=0;j<users.size();++j){
-
-        bool b = true;
-        draw.push_back(b);
+    for(unsigned int j=0; j < this->users.size(); ++j){
+        //bool b = true;
+        this->draw.push_back(true);
     }
 
     for(int i=0;i<screens;++i){
@@ -39,11 +38,11 @@ GLwidget::GLwidget(class MainApp *v, vector<QString> u,vector<Log>l,int i,int s,
 
     loadData();
 
-    for(int i=0;i<features.size();i++){
-        bool b = true;
-        bool b2 = false;
-        draw_points.push_back(b);
-        draw_lines.push_back(b2);
+    for(unsigned int i=0; i < features.size(); i++){
+        //bool b = true;
+        //bool b2 = false;
+        draw_points.push_back(true);
+        draw_lines.push_back(true);
 
         draw_events.push_back(1);
         size_points.push_back(3);
@@ -62,7 +61,7 @@ GLwidget::GLwidget(class MainApp *v, vector<QString> u,vector<Log>l,int i,int s,
     setRanges();
     //setColorMap();
 
-    for(int i=0;i<features.size();i++){
+    for(unsigned int i=0; i < features.size(); i++){
         for(int j = 0;j < (int)features[i].x.size();++j){
             if(min_valx < 0 || max_valx < 0) features[i].timestamp[j] = features[i].timestamp[j] *1000;
         }
@@ -103,7 +102,7 @@ void GLwidget::getHeatMapData(){
     //Mapa de apariciones (pasar el id correcto que viene desde define vis.)
     for(int i=0;i<this->width();i++){
         for(int j=0;j<this->height();j++){
-            for(int z=0;z<features.size();z++){
+            for(unsigned int z=0; z < features.size(); z++){
                 if(features[z].user == heat_user){
                     for(int z1 = 0;z1 < (int)features[z].x.size();++z1){
                             float _x,_y;
@@ -182,26 +181,22 @@ void GLwidget::loadData(){
 
     //Una única screen
     if(screens == 1){
-
-        for (int i=0;i<users.size();i++){
+        for (unsigned int i=0; i < users.size(); i++){
             events = getEvents(users[i],log);
-            for(int j=0;j<events.size();j++){
-
+            for(unsigned int j=0; j < events.size(); j++){
                 //Genera features (deberá ser de categories TO DO)
                 puntos = getFeatures(users[i],events[j],log);                
                 //qDebug() << users[i] << " " << events[j] << " " << puntos.x.size() << " " << puntos.name[j];
                 features.push_back(puntos);
             }
         }
-
     } else {
-
         //Más de una screen
-        if(index < users.size()) {
+        if(((unsigned int)this->index) < users.size()) {
             //Generar eventos del user
             events = getEvents(users[index],log);
 
-            for(int j=0;j<events.size();j++){
+            for(unsigned int j=0; j < events.size(); j++){
                 //Genera features (deberá ser de categories TO DO)
                 puntos = getFeatures(users[index],events[j],log);
                 features.push_back(puntos);
@@ -219,7 +214,7 @@ void GLwidget::getMaxVal(){
     min_valx = 0.0;
     min_valy = 0.0;
 
-    for(int i=0;i<log.size();i++){
+    for(unsigned int i=0; i < log.size(); i++){
         //qDebug() << log[i].getPosX() << " " << log[i].getPosY();
         //Maximo
         if(max_valx < log[i].getPosX() ) max_valx = log[i].getPosX();
@@ -274,7 +269,7 @@ void GLwidget::setColor(){
         v=1;
     }
 
-    for(int i=0;i<features.size();i++){
+    for(unsigned int i=0; i < features.size(); i++){
         QColor color;
         color.setHsvF(h,s,v);
         color.toRgb();
@@ -313,7 +308,7 @@ void GLwidget::mousePressEvent( QMouseEvent *event )
     }
 }
 
-void GLwidget::paintEvent(QPaintEvent *event )
+void GLwidget::paintEvent(QPaintEvent *event)
 {
 
     QPainter painter(this);
@@ -330,7 +325,7 @@ void GLwidget::paintEvent(QPaintEvent *event )
 
     //Checkeamos que no se tenga que dibujar el heap map
     int heat_cont = 0;
-    for(int i=0;i<heat_users.size();i++){
+    for(unsigned int i=0; i < heat_users.size(); i++){
         if(heat_users[i]=="Path"){
             ++heat_cont;
         }
@@ -338,11 +333,11 @@ void GLwidget::paintEvent(QPaintEvent *event )
 
 
     //DIBUJADO DE LINEAS Y PUNTOS
-    if(heat_cont == heat_users.size() ){
+    if((unsigned int)heat_cont == heat_users.size() ){
 
         //PARA DIBUJAR LAS LINEAS
 
-        for(int i=0;i<features.size();i++){
+        for(unsigned int i=0; i < features.size(); i++){
 
             color = colors2D[i];
 
@@ -391,7 +386,7 @@ void GLwidget::paintEvent(QPaintEvent *event )
         }
 
         //PARA DIBUJAR PUNTOS
-        for(int i=0;i<features.size();i++){
+        for(unsigned int i=0; i < features.size(); i++){
 
             color = colors2D[i];
 
@@ -439,7 +434,7 @@ void GLwidget::paintEvent(QPaintEvent *event )
     } // fin paths
 
     //Dibuja puntos del sistema si los hay
-    for(int i=0;i<points.size();++i){
+    for(unsigned int i=0; i < points.size(); ++i){
 
         //Idealmente pasarle el color desde MainApp.cpp
 
@@ -476,7 +471,7 @@ void GLwidget::paintEvent(QPaintEvent *event )
 
 
     //Heat Map si esta seleccionada la acción
-    if(heat_cont != heat_users.size()){
+    if((unsigned int)heat_cont != heat_users.size()){
 
         //getHeatMapData();
 
@@ -741,7 +736,7 @@ void MainApp::loadMenu(){
 
         int min,max,value;
 
-        for(int j=0;j<videolog.size();j++) {
+        for(unsigned int j=0; j < videolog.size(); j++) {
 
             min = floor((float) players[0]->position()/1000);
             max = ceil((float) videolog[j].timestamp/1000);
@@ -760,7 +755,7 @@ void MainApp::loadMenu(){
 
                 bool encontrado = false;
 
-                for(int s=0;s<pos_timeline.size();++s){
+                for(unsigned int s=0; s < pos_timeline.size(); ++s){
 
                     if(!category_load && (pos_timeline[s] == min && category_prev[s] == videolog[j].categoria)){
                         encontrado = true;
@@ -776,7 +771,7 @@ void MainApp::loadMenu(){
                     _c = videolog[j].color;
                     color_timeline.push_back(_c);
 
-                    for(int i=0;i<categories.size();i++){
+                    for(unsigned int i=0; i < categories.size(); i++){
                         if(categories[i] == videolog[j].categoria){
                             indexs.push_back(i);
                             //qDebug() << i;
@@ -793,7 +788,7 @@ void MainApp::loadMenu(){
 
             //qDebug() << pos_timeline.size();
 
-            for(int s=0;s<pos_timeline.size();++s){
+            for(unsigned int s=0; s < pos_timeline.size(); ++s){
 
                 QLabel *l = new QLabel();
                 l->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
@@ -842,7 +837,7 @@ void MainApp::loadCategories(){
     int cont = 0;
 
     //recorrer numero de categorias creadas (creada en un vector qLabel y QCheckbox)
-    for(int j=0;j<categories.size();j++){
+    for(unsigned int j=0; j < categories.size(); j++){
 
         //Colores
         QLabel *cpicker = new QLabel();
@@ -857,7 +852,7 @@ void MainApp::loadCategories(){
 
         QCheckBox *c = new QCheckBox();
 
-        if(index_check_color == j) {
+        if((unsigned int)this->index_check_color == j) {
             c->setChecked(true);
         } else {
             c->setChecked(false);
@@ -1170,7 +1165,7 @@ void MainApp::SaveCategory(){
         QFile file(fileName);
         file.open(QIODevice::WriteOnly | QIODevice::Text);
 
-        for(int i=0;i<videolog.size();++i){
+        for(unsigned int i=0; i < videolog.size(); ++i){
             QTextStream out(&file);
             out  << videolog[i].timestamp << ";" <<  videolog[i].x << ";" << videolog[i].y << ";" << videolog[i].color.name() << ";" << videolog[i].note << ";" << videolog[i].tipo << ";" << videolog[i].categoria << "\n";
             //qDebug() << videolog[i].timestamp << " " << videolog[i].x << " " << videolog[i].y << " " << videolog[i].note;
@@ -1400,7 +1395,7 @@ int MainApp::getMaxTimestamp(int index){
     int max = -1;
 
     if(screens == 1){
-        for(int i=0;i<features.size();++i){
+        for(unsigned int i=0; i < features.size(); ++i){
             for(int j = 0;j < (int)features[i].x.size();++j){
                 if(max < features[i].timestamp[j]) max = features[i].timestamp[j];
                  //qDebug() << features[i].timestamp[j]  << " - " << features[i].name[j];
@@ -1411,14 +1406,14 @@ int MainApp::getMaxTimestamp(int index){
         //qDebug() << "index" << index;
         unique_event = getEvents(users[index],log);
 
-        for(int i=0;i<unique_event.size();++i){
+        for(unsigned int i=0; i < unique_event.size(); ++i){
             //Genera features (deberá ser de categories TO DO)
             unique_point = getFeatures(users[index],unique_event[i],log);
             //qDebug() << users[i] << " " << events[j] << " " << puntos.x.size() << " " << puntos.name[j];
             unique_feature.push_back(unique_point);
         }
 
-        for(int i=0;i<unique_feature.size();++i){
+        for(unsigned int i=0; i < unique_feature.size(); ++i){
             for(int j = 0;j < (int)unique_feature[i].x.size();++j){
                 if(max < unique_feature[i].timestamp[j]) max = unique_feature[i].timestamp[j];
                  //qDebug() << unique_feature[i].timestamp[j]  << " - " << unique_feature[i].name[j];
@@ -1627,7 +1622,7 @@ void MainApp::refreshPoints()
 
     frames[0]->size = players[0]->duration();
 
-    for(int i=0;i<videos[0]->points.size();++i){
+    for(unsigned int i=0; i < videos[0]->points.size(); ++i){
         //qDebug() << "tstamp: " << videos[s]->timestamp[i] << "point: " << videos[s]->points[i].x() << " : " << videos[s]->points[i].y();
 
         VideoLog vl;
@@ -1724,9 +1719,9 @@ void MainApp::countData(){
 
     total_datos = 0;
 
-    for (int i=0;i<this->users.size();i++){
+    for (unsigned int i=0; i < this->users.size(); i++){
         events = getEvents(this->users[i],log);
-        for(int j=0;j<events.size();j++){
+        for(unsigned int j=0; j < events.size(); j++){
             ++total_datos;
         }
     }
@@ -1927,7 +1922,7 @@ void videodrawer::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::Antialiasing);
 
     //omitimos la iteración 0 porque es el punto inicial que se ejecuta sin hacer click
-    for(int i=0;i<points.size();++i){
+    for(unsigned int i=0; i < points.size(); ++i){
 
         //qDebug() << minTimestamp << " - " << maxTimestamp << " - " << timestamp[i];
 
