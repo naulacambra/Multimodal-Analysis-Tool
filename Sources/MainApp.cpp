@@ -310,7 +310,6 @@ void GLwidget::mousePressEvent( QMouseEvent *event )
 
 void GLwidget::paintEvent(QPaintEvent *event)
 {
-
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
@@ -537,7 +536,7 @@ MainApp::MainApp(QString filepath, vector<QString> users, vector<Log> log, QStri
 
     this->filepath = filepath;
     this->videopath = videopath;
-    //users = u;
+    this->users = users;
     this->log = log;
 
     this->category_load = false;
@@ -625,7 +624,7 @@ MainApp::MainApp(QString filepath, vector<QString> users, vector<Log> log, QStri
     ui->horizontalLayout_1->addWidget(scroll_datos);
 
     maxTimestamp = 0;
-    int index_check_color = 0;
+    //int index_check_color = 0;
 }
 
 MainApp::~MainApp()
@@ -898,8 +897,8 @@ void MainApp::loadCategories(){
 
 void MainApp::loadWidgets(){
 
-    int col = 0;
-    int row = 0;
+    //int col = 0;
+    //int row = 0;
 
     if(total_datos == 0) maxTimestamp = 10;
     else maxTimestamp = getMaxTimestamp(0);
@@ -939,7 +938,7 @@ void MainApp::loadWidgets(){
 
     //g->setMinimumSize(300,300);
 
-    col = 0;
+    //col = 0;
 
     QLabel *t = new QLabel("Data");
     t->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Fixed);
@@ -1308,8 +1307,8 @@ void MainApp::showLines(QString s){
     QString id2 = pieces[1];
     QString id3 = pieces[2];
 
-    int id_user = id1.toInt();
-    int id_event = id2.toInt();
+    //int id_user = id1.toInt();
+    //int id_event = id2.toInt();
     int cont = id3.toInt();
 
     if(gl[0]->draw_lines[cont] == true){
