@@ -19,7 +19,7 @@ void customslider::paintEvent(QPaintEvent *e)
 
     float offset = (float)this->width()/(float)size;
 
-    for(int i=0;i<timestamps.size();++i){
+    for(unsigned int i=0;i<timestamps.size();++i){
         QPen linepen(color[i]);
         linepen.setWidth(10);
         painter.setPen(linepen);

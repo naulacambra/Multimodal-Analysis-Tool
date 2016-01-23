@@ -4,7 +4,7 @@ vector<QString> getCategories(vector<VideoLog>l){
 
     vector<QString> result;
 
-    for(int i=0;i<l.size();i++){
+    for(unsigned int i=0;i<l.size();i++){
         QString s = l[i].categoria;
 
         if (!(std::find(result.begin(), result.end(), s ) != result.end()))
@@ -21,7 +21,7 @@ vector<QColor> getColorCategories(vector<VideoLog>l){
 
     vector<QColor> result;
 
-    for(int i=0;i<l.size();i++){
+    for(unsigned int i=0;i<l.size();i++){
         QString s = l[i].color.name();
 
         if (!(std::find(result.begin(), result.end(), s ) != result.end()))
@@ -39,7 +39,7 @@ vector<QString> getUsers(vector<Log>l){
 
     vector<QString> result;
 
-    for(int i=0;i<l.size();i++){
+    for(unsigned int i=0;i<l.size();i++){
         QString s = l[i].getUser();
 
         if (!(std::find(result.begin(), result.end(), s ) != result.end()))
@@ -55,7 +55,7 @@ vector<QString> getEvents(QString user,vector<Log>l){
 
     vector<QString> result;
 
-    for(int i=0;i<l.size();i++){
+    for(unsigned int i=0;i<l.size();i++){
         QString u = l[i].getUser();
         if(user == u){
             QString s = l[i].getEvent();
@@ -76,7 +76,7 @@ Puntos getFeatures(QString user,QString event,vector<Log>l){
     vector<Puntos> result;
     Puntos p;
 
-    for(int i=0;i<l.size();i++){
+    for(unsigned int i=0;i<l.size();i++){
         QString u = l[i].getUser();
         if(user == u){
             QString e = l[i].getEvent();

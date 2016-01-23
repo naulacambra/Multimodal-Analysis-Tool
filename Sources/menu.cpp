@@ -133,7 +133,7 @@ void Menu::loadLog(QString path){
 
 void Menu::addLeftContent(){
 
-    for(int i=0;i<users.size();i++){
+    for(unsigned int i=0;i<users.size();i++){
 
         //Añadimos todas las labels al vector de labels
         QLabel *label = new QLabel(users[i]);
@@ -163,7 +163,7 @@ void Menu::addLeftContent(){
     //Mapper connector
     connect(User_mapper, SIGNAL(mapped(int)), this, SLOT(addUserToList(int)));
 
-    for(int i=0;i<users_labels.size();i++){
+    for(unsigned int i=0;i<users_labels.size();i++){
         grid->addWidget(users_labels[i],i, 0, 1, 1);
         grid->addWidget(users_btns[i], i, 1, 1, 1);
 
@@ -194,7 +194,7 @@ void Menu::addRightContent(int id){
     _select.clear();
     events_label_right.clear();
 
-    for(int i=0;i<users_event.size();i++){
+    for(unsigned int i=0;i<users_event.size();i++){
 
         events = getEvents(users_event[i],log);
 
@@ -220,7 +220,7 @@ void Menu::addRightContent(int id){
 
         //qDebug() << " ini  " << i+offset;
 
-        for(int j=0;j<events.size();++j){
+        for(unsigned int j=0;j<events.size();++j){
             //Añadimos todos sus eventos
             QLabel *modify = new QLabel("Modifica");
             modify->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
@@ -422,7 +422,7 @@ vector<Log> Menu::setEventsByUser(QString user,QString event_old,QString event_n
 
     //qDebug() << user << " - " <<  event_old << " - "<< event_new;
 
-    for(int i=0;i<l.size();i++){
+    for(unsigned int i=0;i<l.size();i++){
         QString u = l[i].getUser();
         if(user == u){
             QString e = l[i].getEvent();

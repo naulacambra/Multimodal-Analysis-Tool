@@ -14,7 +14,6 @@ int main(int argc, char *argv[])
     vector<Log> log;
 
     MainApp * app = new MainApp("", users, log, "");
-    //MainApp * vgl = new MainApp("", users, log, "");
     app->show();
 
     return a.exec();

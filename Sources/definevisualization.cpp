@@ -52,7 +52,7 @@ void DefineVisualization::setPopUp()
 
     gl_define = new QGridLayout();
 
-    for(int i=0;i<vgl->gl[0]->features.size();i++){
+    for(unsigned int i=0;i<vgl->gl[0]->features.size();i++){
 
         QString event = vgl->gl[0]->features[i].name[0];
 
@@ -148,7 +148,7 @@ void DefineVisualization::setPopUp()
     //qDebug() << users.size();
 
 
-    for(int i=0;i<users.size();++i){
+    for(unsigned int i=0;i<users.size();++i){
 
         QLabel *u = new QLabel(users[i]);
         u->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -261,7 +261,7 @@ void DefineVisualization::changeVisualization(int i){
 
     //Marcamos a true la correcta
     bool encontrado = false;
-    for(int i=0; i<labels.size();i++){
+    for(unsigned int i=0; i<labels.size();i++){
         if(labels[i]->text() != "Path"){
             encontrado = true;
         }
@@ -322,8 +322,8 @@ void DefineVisualization::changeType(){
         vgl->gl[0]->heat_user = vgl->users[cont];
         vgl->gl[0]->heat_id = cont;
 
-        for(int i=0;i<labels.size();++i){
-            if(i!=cont) {
+        for(unsigned int i=0;i<labels.size();++i){
+            if(i!=(unsigned int)cont) {
                 labels[i]->setText("Path");
                 vgl->gl[0]->heat_users[i] = "Path";
             }
