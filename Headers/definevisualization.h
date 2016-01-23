@@ -11,7 +11,7 @@
 #include <QScrollArea>
 #include <QSignalMapper>
 #include <QFileDialog>
-#include "visualizegl.h"
+#include "MainApp.h"
 #include "clickablelabel.h"
 #include "styles.h"
 #include <QMessageBox>
@@ -27,7 +27,7 @@ class DefineVisualization : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit DefineVisualization(visualizeGL *v, QWidget *parent = 0);
+    explicit DefineVisualization(MainApp *v, QWidget *parent = 0);
     ~DefineVisualization();
 
 private:
@@ -35,7 +35,7 @@ private:
 
 public:
 
-    visualizeGL * vgl;
+    MainApp * vgl;
 
     QWidget * widget;
     QWidget *wl_define,*wr_define;

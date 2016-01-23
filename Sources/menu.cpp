@@ -1,7 +1,7 @@
 #include "Headers/menu.h"
 #include "ui_menu.h"
 
-Menu::Menu(visualizeGL *gl, QString path,QWidget *parent) :
+Menu::Menu(MainApp *gl, QString path,QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Menu)
 {

@@ -16,7 +16,7 @@
 #include <QDebug>
 #include <QMessageBox>
 
-#include "visualizegl.h"
+#include "MainApp.h"
 
 #include "clickablelabel.h"
 #include "styles.h"
@@ -32,13 +32,13 @@ class Menu : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit Menu(visualizeGL *gl, QString path,QWidget *parent = 0);
+    explicit Menu(MainApp *gl, QString path,QWidget *parent = 0);
     ~Menu();
 
 private:
     Ui::Menu *ui;
     QString filepath;    
-    visualizeGL *vgl;
+    MainApp *vgl;
 
     //Data LOG
     vector<Log> log;

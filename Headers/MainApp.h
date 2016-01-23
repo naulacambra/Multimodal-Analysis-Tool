@@ -1,5 +1,5 @@
-#ifndef VISUALIZEGL_H
-#define VISUALIZEGL_H
+#ifndef MAINAPP_H
+#define MAINAPP_H
 
 #include "styles.h"
 
@@ -64,7 +64,7 @@ class videodrawer: public QWidget
 {
     Q_OBJECT
 public:
-    explicit videodrawer(class visualizeGL *v,QWidget *parent = 0);
+    explicit videodrawer(class MainApp *v,QWidget *parent = 0);
 
     //functions
     void showPopUp();
@@ -80,7 +80,7 @@ public:
     int minTimestamp,maxTimestamp;
     int index_note;
 
-    class visualizeGL *vis;
+    class MainApp *vis;
     QWidget * widget;
     QPlainTextEdit *text;
 
@@ -103,7 +103,7 @@ class GLwidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit GLwidget(class visualizeGL *v, vector<QString> u,vector<Log>l,int i,int s,QWidget *parent = 0);
+    explicit GLwidget(class MainApp *v, vector<QString> u,vector<Log>l,int i,int s,QWidget *parent = 0);
 
     void loadData();
     void getMaxVal();
@@ -142,7 +142,7 @@ public:
     QWidget * widget;
     QPlainTextEdit *text;
 
-    class visualizeGL *vis;
+    class MainApp *vis;
 
     //vector<QColor> color;
     QColor color;
@@ -191,19 +191,19 @@ private slots:
 
 };
 
-////////////////// VISUALIZELG ////////////////////
+////////////////// MainApp ////////////////////
 
 namespace Ui {
-class visualizeGL;
+    class MainApp;
 }
 
-class visualizeGL : public QMainWindow
+class MainApp : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit visualizeGL(QString path,vector<QString> u,vector<Log>l,QString video, QWidget *parent = 0);
-    ~visualizeGL();    
+    explicit MainApp(QString filepath,vector<QString> u,vector<Log>l,QString video, QWidget *parent = 0);
+    ~MainApp();
 
     //layouts
     QHBoxLayout *header;
@@ -335,7 +335,7 @@ public:
     QTimer *timer;
 
 private:
-    Ui::visualizeGL *ui;
+    Ui::MainApp *ui;
 
 public slots:
     void showUser(int i);
@@ -372,4 +372,4 @@ public slots:
 };
 
 
-#endif // VISUALIZEGL_H
+#endif // MainApp_H

@@ -18,10 +18,10 @@ SOURCES += \
     Sources/menu.cpp \
     Sources/clickablelabel.cpp \
     Sources/functions.cpp \
-    Sources/visualizegl.cpp \
     Sources/customslider.cpp \
     Sources/definevisualization.cpp \
-    Sources/styles.cpp
+    Sources/styles.cpp \
+    Sources/MainApp.cpp
 
 HEADERS += \
     #Headers/main.h \
@@ -29,19 +29,19 @@ HEADERS += \
     Headers/menu.h \
     Headers/clickablelabel.h \
     Headers/functions.h \
-    Headers/visualizegl.h \
     Headers/puntos.h \
     Headers/videolog.h \
     Headers/customslider.h \
     Headers/definevisualization.h \
-    Headers/styles.h
+    Headers/styles.h \
+    Headers/MainApp.h
 
 FORMS += \
     #Forms/main.ui \
     Forms/loader.ui \
     Forms/menu.ui \
-    Forms/visualizegl.ui \
     Forms/definevisualization.ui \
+    Forms/MainApp.ui
 
 DISTFILES += \
     README.md

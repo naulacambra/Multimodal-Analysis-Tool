@@ -1,7 +1,7 @@
 #include "Headers/definevisualization.h"
 #include "ui_definevisualization.h"
 
-DefineVisualization::DefineVisualization(visualizeGL *v, QWidget *parent) :
+DefineVisualization::DefineVisualization(MainApp *v, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::DefineVisualization)
 {

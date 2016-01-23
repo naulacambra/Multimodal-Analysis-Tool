@@ -8,7 +8,7 @@
 #include <QPushButton>
 #include <QMediaPlayer>
 #include <QColorDialog>
-#include "visualizegl.h"
+#include "MainApp.h"
 #include "customslider.h"
 
 class ClickableLabel : public QLabel
@@ -16,11 +16,11 @@ class ClickableLabel : public QLabel
 Q_OBJECT
 
 public:
-    explicit ClickableLabel(visualizeGL *gl=0, QMediaPlayer* p =0,customslider* s=0, int t = -1,int i=-1, QWidget * parent = 0 );
+    explicit ClickableLabel(MainApp *gl=0, QMediaPlayer* p =0,customslider* s=0, int t = -1,int i=-1, QWidget * parent = 0 );
     ~ClickableLabel();
 
     //QObjects    
-    visualizeGL *vgl;
+    MainApp *vgl;
     QMediaPlayer* _player;
     customslider* slider;
     int type;

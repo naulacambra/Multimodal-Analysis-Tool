@@ -1,6 +1,6 @@
 #include "Headers/clickablelabel.h"
 
-ClickableLabel::ClickableLabel(visualizeGL *gl, QMediaPlayer* p,customslider* s, int t, int i, QWidget * parent ) :
+ClickableLabel::ClickableLabel(MainApp *gl, QMediaPlayer* p,customslider* s, int t, int i, QWidget * parent ) :
 QLabel(parent)
 {
 

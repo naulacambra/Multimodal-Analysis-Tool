@@ -1,5 +1,5 @@
-#include "Headers/visualizegl.h"
-#include "ui_visualizegl.h"
+#include "Headers/MainApp.h"
+#include "ui_MainApp.h"
 #include "Headers/clickablelabel.h"
 #include "Headers/menu.h"
 #include "Headers/definevisualization.h"
@@ -7,7 +7,7 @@
 //#include <GLUT/glut.h>
 
 
-GLwidget::GLwidget(class visualizeGL *v, vector<QString> u,vector<Log>l,int i,int s,QWidget *parent) :
+GLwidget::GLwidget(class MainApp *v, vector<QString> u,vector<Log>l,int i,int s,QWidget *parent) :
     QWidget(parent)
 {
     setMouseTracking(true);
@@ -441,7 +441,7 @@ void GLwidget::paintEvent(QPaintEvent *event )
     //Dibuja puntos del sistema si los hay
     for(int i=0;i<points.size();++i){
 
-        //Idealmente pasarle el color desde visualizegl.cpp
+        //Idealmente pasarle el color desde MainApp.cpp
 
         if((minTimestamp[index] == 0 && maxTimestamp[index] == 0) ||( timestamp.size() > 0 && (minTimestamp[index] <= timestamp[i] && maxTimestamp[index] >= timestamp[i] ) ) ){
 
@@ -524,12 +524,12 @@ void GLwidget::addNote(){
     setMouseTracking(true);
 }
 
-/////////// VISUALIZE GL /////////
+/////////// MainApp /////////
 
 
-visualizeGL::visualizeGL(QString path,vector<QString> u,vector<Log>l,QString video,QWidget *parent) :
+MainApp::MainApp(QString filepath, vector<QString> users, vector<Log> log, QString videopath, QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::visualizeGL)
+    ui(new Ui::MainApp)
 {
 
     this->setWindowState(Qt::WindowMaximized);
@@ -540,17 +540,16 @@ visualizeGL::visualizeGL(QString path,vector<QString> u,vector<Log>l,QString vid
 
     ui->setupUi(this);
 
-    filepath = path;
-    videopath = video;
+    this->filepath = filepath;
+    this->videopath = videopath;
     //users = u;
-    log = l;
+    this->log = log;
 
-    category_load = false;
+    this->category_load = false;
 
     //loadHeader();
 
     countData();
-
 
     if(total_datos == 0){
         degrees = 0;
@@ -580,7 +579,6 @@ visualizeGL::visualizeGL(QString path,vector<QString> u,vector<Log>l,QString vid
     Box_timeline->setLayout(p);
 
     loadMenu();
-
 
     scroll_linea_temporal->setWidget(Box_timeline);
     ui->horizontalLayout_2->addWidget(scroll_linea_temporal);
@@ -635,12 +633,12 @@ visualizeGL::visualizeGL(QString path,vector<QString> u,vector<Log>l,QString vid
     int index_check_color = 0;
 }
 
-visualizeGL::~visualizeGL()
+MainApp::~MainApp()
 {
     delete ui;
 }
 
-void visualizeGL::loadHeader(){
+void MainApp::loadHeader(){
 
 //    header = new QHBoxLayout();
 //    QLabel *l = new QLabel(title);
@@ -657,7 +655,7 @@ void visualizeGL::loadHeader(){
 
 }
 
-void visualizeGL::loadMenu(){
+void MainApp::loadMenu(){
 
     mapper_minslider = new QSignalMapper();
     mapper_maxslider = new QSignalMapper();
@@ -828,7 +826,7 @@ void visualizeGL::loadMenu(){
 
 }
 
-void visualizeGL::loadCategories(){
+void MainApp::loadCategories(){
 
     colorMapper = new QSignalMapper();
 
@@ -903,7 +901,7 @@ void visualizeGL::loadCategories(){
     grid_category_ctrls->addWidget(save_categories,1,3,1,1);
 }
 
-void visualizeGL::loadWidgets(){
+void MainApp::loadWidgets(){
 
     int col = 0;
     int row = 0;
@@ -977,7 +975,7 @@ void visualizeGL::loadWidgets(){
 //    connect(mapper_maxslider, SIGNAL(mapped(int)), this, SLOT(setMaxTimestamp(int)));
 }
 
-void visualizeGL::loadVideos(){
+void MainApp::loadVideos(){
 
     scroll_video = new QScrollArea();
     scroll_video->setWidgetResizable(true);
@@ -1098,11 +1096,11 @@ void visualizeGL::loadVideos(){
 
 }
 
-void visualizeGL::setVolume(int val){
+void MainApp::setVolume(int val){
     players[0]->setVolume(val);
 }
 
-void visualizeGL::AddCategory(){
+void MainApp::AddCategory(){
 
     QHBoxLayout *h = new QHBoxLayout();
     widget_category = new QWidget();
@@ -1136,7 +1134,7 @@ void visualizeGL::AddCategory(){
     connect(button, SIGNAL(clicked()), this, SLOT(addnewCategory()));
 }
 
-void visualizeGL::addnewCategory(){
+void MainApp::addnewCategory(){
 
     removeLayout(grid_category);
     removeLayout(grid_category_ctrls);
@@ -1156,7 +1154,7 @@ void visualizeGL::addnewCategory(){
     widget_category->close();
 }
 
-void visualizeGL::SaveCategory(){
+void MainApp::SaveCategory(){
 
 
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
@@ -1184,7 +1182,7 @@ void visualizeGL::SaveCategory(){
 
 }
 
-void visualizeGL::LoadCategory(){
+void MainApp::LoadCategory(){
 
     //qDebug() << "load";
 
@@ -1232,7 +1230,7 @@ void visualizeGL::LoadCategory(){
     }    
 }
 
-void visualizeGL::loadCategoryLog(QString path){
+void MainApp::loadCategoryLog(QString path){
 
     //Leemos linea a linea
     QFile file(path);
@@ -1295,7 +1293,7 @@ void visualizeGL::loadCategoryLog(QString path){
 }
 
 
-void visualizeGL::showUser(int i){
+void MainApp::showUser(int i){
 
 
     if(gl[0]->draw[i] == true){
@@ -1308,7 +1306,7 @@ void visualizeGL::showUser(int i){
 
 }
 
-void visualizeGL::showLines(QString s){
+void MainApp::showLines(QString s){
 
     QStringList pieces = s.split("_");
     QString id1 = pieces[0];
@@ -1329,7 +1327,7 @@ void visualizeGL::showLines(QString s){
 }
 
 
-void visualizeGL::showPoints(QString s){
+void MainApp::showPoints(QString s){
 
     //qDebug() << s;
 
@@ -1348,7 +1346,7 @@ void visualizeGL::showPoints(QString s){
     }
 }
 
-void visualizeGL::showEvents(QString s){
+void MainApp::showEvents(QString s){
 
     //qDebug() << s;
 
@@ -1368,7 +1366,7 @@ void visualizeGL::showEvents(QString s){
     }
 }
 
-void visualizeGL::setPointSize(QString s){
+void MainApp::setPointSize(QString s){
     QStringList pieces = s.split("_");
     QString id1 = pieces[0];
     QString id2 = pieces[1];
@@ -1382,7 +1380,7 @@ void visualizeGL::setPointSize(QString s){
     gl[0]->update();
 }
 
-void visualizeGL::setLineSize(QString s){
+void MainApp::setLineSize(QString s){
 
     QStringList pieces = s.split("_");
     QString id1 = pieces[0];
@@ -1397,7 +1395,7 @@ void visualizeGL::setLineSize(QString s){
     gl[0]->update();
 }
 
-int visualizeGL::getMaxTimestamp(int index){
+int MainApp::getMaxTimestamp(int index){
 
     int max = -1;
 
@@ -1431,7 +1429,7 @@ int visualizeGL::getMaxTimestamp(int index){
     return max;
 }
 
-void visualizeGL::setMinTimestamp(int i){
+void MainApp::setMinTimestamp(int i){
 
     int value = 0;
 
@@ -1460,7 +1458,7 @@ void visualizeGL::setMinTimestamp(int i){
 
 }
 
-void visualizeGL::setMaxTimestamp(int i){
+void MainApp::setMaxTimestamp(int i){
 
     int value = 0;
 
@@ -1494,7 +1492,7 @@ void visualizeGL::setMaxTimestamp(int i){
 
 }
 
-void visualizeGL::PauseVideo(int i){
+void MainApp::PauseVideo(int i){
     if(players[i]->state() == QMediaPlayer::PlayingState) {
         players[i]->pause();        
         pause[i]->setText("Play");
@@ -1525,12 +1523,12 @@ void visualizeGL::PauseVideo(int i){
 }
 
 
-void visualizeGL::StopVideo(int i){
+void MainApp::StopVideo(int i){
    pause[i]->setText("Play");
    players[i]->stop();
 }
 
-void visualizeGL::updateFrame(int i){
+void MainApp::updateFrame(int i){
     frames[i]->setMaximum(players[i]->duration());
     //frames[i]->setRange(0, players[i]->duration());
     players[i]->setPosition(frames[i]->value());
@@ -1540,7 +1538,7 @@ void visualizeGL::updateFrame(int i){
 }
 
 
-void visualizeGL::setColorLabel(){
+void MainApp::setColorLabel(){
 
     color.setHsvF(h,s,v);
     color.toRgb();
@@ -1548,7 +1546,7 @@ void visualizeGL::setColorLabel(){
     if(h > 1) h=1.0;
 }
 
-void visualizeGL::setColor(QString s){
+void MainApp::setColor(QString s){
 
     QStringList pieces = s.split("_");
     QString id1 = pieces[0];
@@ -1590,7 +1588,7 @@ void visualizeGL::setColor(QString s){
 }
 
 
-void visualizeGL::removeLayout(QVBoxLayout *area){
+void MainApp::removeLayout(QVBoxLayout *area){
 
     QLayoutItem * item;
     QWidget * widget;
@@ -1600,7 +1598,7 @@ void visualizeGL::removeLayout(QVBoxLayout *area){
     }
 }
 
-void visualizeGL::removeLayout(QGridLayout *area){
+void MainApp::removeLayout(QGridLayout *area){
 
     QLayoutItem * item;
     QWidget * widget;
@@ -1611,7 +1609,7 @@ void visualizeGL::removeLayout(QGridLayout *area){
 }
 
 
-void visualizeGL::refreshPoints()
+void MainApp::refreshPoints()
 {
 
     //removeLayout(m);
@@ -1656,7 +1654,7 @@ void visualizeGL::refreshPoints()
    loadCategories();
 }
 
-void visualizeGL::LoadVideo(){
+void MainApp::LoadVideo(){
 
     QString filename = QFileDialog::getOpenFileName(
                 this,
@@ -1689,7 +1687,7 @@ void visualizeGL::LoadVideo(){
 }
 
 
-void visualizeGL::LoadData(){
+void MainApp::LoadData(){
 
     QString filename = QFileDialog::getOpenFileName(
                 this,
@@ -1716,18 +1714,18 @@ void visualizeGL::LoadData(){
     }
 }
 
-void visualizeGL::DefineVis(){
+void MainApp::DefineVis(){
 
     DefineVisualization *def_vis = new DefineVisualization(this);
     def_vis->show();
 }
 
-void visualizeGL::countData(){
+void MainApp::countData(){
 
     total_datos = 0;
 
-    for (int i=0;i<users.size();i++){
-        events = getEvents(users[i],log);
+    for (int i=0;i<this->users.size();i++){
+        events = getEvents(this->users[i],log);
         for(int j=0;j<events.size();j++){
             ++total_datos;
         }
@@ -1735,7 +1733,7 @@ void visualizeGL::countData(){
 }
 
 
-void visualizeGL::Listener(){
+void MainApp::Listener(){
 
     QString time = QDateTime::fromTime_t(players[0]->position()).toString("hh:mm:ss");
     videotimer->setText(time);
@@ -1767,7 +1765,7 @@ void visualizeGL::Listener(){
     }
 }
 
-void visualizeGL::updateLog(float t,float x,float y,QString text){
+void MainApp::updateLog(float t,float x,float y,QString text){
 
     //qDebug() << t << " " << x << " " << y << " " << text << " video";
 
@@ -1831,7 +1829,7 @@ void visualizeGL::updateLog(float t,float x,float y,QString text){
 }
 
 
-void visualizeGL::updateLogGL(float t,float x,float y,QString text){
+void MainApp::updateLogGL(float t,float x,float y,QString text){
 
     //qDebug() << t << " " << x << " " << y << " " << text << " data 2D";
 
@@ -1884,7 +1882,7 @@ void visualizeGL::updateLogGL(float t,float x,float y,QString text){
 }
 
 
-videodrawer::videodrawer(class visualizeGL *v,QWidget *parent) :
+videodrawer::videodrawer(class MainApp *v,QWidget *parent) :
     QWidget(parent)
 {
     //inicializamos los valores
@@ -1935,7 +1933,7 @@ void videodrawer::paintEvent(QPaintEvent *e)
 
         if((minTimestamp == 0 && maxTimestamp == 0) ||( timestamp.size() > 0 && (minTimestamp <= timestamp[i] && maxTimestamp >= timestamp[i] ) ) ){
 
-            //Idealmente pasarle el color desde visualizegl.cpp
+            //Idealmente pasarle el color desde MainApp.cpp
             QPen linepen(colors[i]);
             linepen.setWidth(10);
             painter.setPen(linepen);
