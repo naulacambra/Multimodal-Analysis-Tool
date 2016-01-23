@@ -42,3 +42,6 @@ FORMS += \
     Forms/menu.ui \
     Forms/visualizegl.ui \
     Forms/definevisualization.ui \
+
+DISTFILES += \
+    README.md
