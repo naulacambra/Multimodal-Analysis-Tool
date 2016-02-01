@@ -544,8 +544,8 @@ MainApp::MainApp(QString filepath, QString videopath, QWidget *parent) : QMainWi
     this->s=1;
     this->v=1;
 
-    this->setUpTimelineBox();
     this->setUpTimeline();
+    this->setUpTimelineBox();
 
     scroll_linea_temporal->setWidget(Box_timeline);
     ui->horizontalLayout_2->addWidget(scroll_linea_temporal);
@@ -628,10 +628,10 @@ void MainApp::setUpTimelineBox(){
 
     QLabel *timelineLabel = new QLabel("Timeline");
     timelineLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    p->addWidget( timelineLabel );
+    //p->addWidget( timelineLabel );
 
     grid_timeline = new QGridLayout();
-    p->addLayout( grid_timeline );
+    //p->addLayout( grid_timeline );
 
     QLabel *label = new QLabel("Start: 0");
     label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
