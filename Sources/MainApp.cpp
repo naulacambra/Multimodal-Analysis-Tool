@@ -282,16 +282,16 @@ void GLwidget::mousePressEvent( QMouseEvent *event )
 
     //qDebug() << p1.x() << " - " << p1.y();
 
-    if(p1.x() > 0 && p1.y() > 0 && vis->players[0]->isVideoAvailable()){
+    if(p1.x() > 0 && p1.y() > 0 && this->vis->players[0]->isVideoAvailable()){
 
-        if(event->button() == Qt::RightButton && vis->categories.size() > 0) {
+        if(event->button() == Qt::RightButton && this->vis->categories.size() > 0) {
 
             _point = this->mapFromGlobal(QCursor::pos());
             //_timestamp = vis->player->position();
             points.push_back(_point);
             colors.push_back(c);
             //timestamp.push_back(_timestamp);
-            timestamp.push_back(vis->player->position());
+            timestamp.push_back(this->vis->player->position());
             //this->update();
             showPopUp();
         }
@@ -458,7 +458,7 @@ void GLwidget::paintEvent(QPaintEvent *event)
              painter.setPen(font_color);
              painter.setFont(font);
 
-             painter.drawText(QPoint(points[index_note].x(),points[index_note].y()-5), vis->videolog[index_note].note);
+             painter.drawText(QPoint(points[index_note].x(),points[index_note].y()-5), this->vis->videolog[index_note].note);
         }
 
     }
@@ -508,7 +508,7 @@ void GLwidget::showPopUp(){
 void GLwidget::addNote(){
     //vis->updateLog();
     setMouseTracking(false);
-    vis->updateLogGL(vis->players[0]->position(),_point.x(),_point.y(),text->toPlainText());
+    this->vis->updateLogGL(this->vis->players[0]->position(),_point.x(),_point.y(),text->toPlainText());
     widget->close();
     setMouseTracking(true);
 }
@@ -945,7 +945,6 @@ void MainApp::loadVideos(){
     QLabel *t = new QLabel("Video");
     t->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
-
     videoloader = new QPushButton("Load Video");
     videoloader->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
@@ -1014,7 +1013,7 @@ void MainApp::AddCategory(){
 
     text = new QPlainTextEdit();
     text->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    text->setPlaceholderText("category descrption");
+    text->setPlaceholderText("category description");
     text->setFixedHeight(35);
     text->setFixedWidth(widget_category->width()/3);
 
@@ -1779,7 +1778,7 @@ void MainApp::updateLogGL(float t,float x,float y,QString text){
     }
 }
 
-videodrawer::videodrawer(class MainApp *v,QWidget *parent) :
+videodrawer::videodrawer(class MainApp *v, QWidget *parent) :
     QWidget(parent)
 {
     //inicializamos los valores
@@ -1793,19 +1792,18 @@ videodrawer::videodrawer(class MainApp *v,QWidget *parent) :
 
 void videodrawer::mousePressEvent( QMouseEvent *event )
 {
-    QPoint p1 = this->mapFromGlobal(QCursor::pos());
+    QPoint mousePosition = this->mapFromGlobal( QCursor::pos() );
     //qDebug() << p1.x() << " - " << p1.y();
 
-    if(p1.x() > 0 && p1.y() > 0 && vis->players[0]->isVideoAvailable() ){
-        if(event->button() == Qt::RightButton && vis->categories.size() > 0) {
-            point = this->mapFromGlobal(QCursor::pos());
-            points.push_back(point);
-            colors.push_back(c);
-            timestamp.push_back(player->position());
+    if( mousePosition.x() > 0 && mousePosition.y() > 0 && this->vis->players[0]->isVideoAvailable() ){
+        if( event->button() == Qt::RightButton && this->vis->categories.size() > 0 ) {
+            //point = this->mapFromGlobal( QCursor::pos() );
+            this->points.push_back( mousePosition );
+            this->colors.push_back( c );
+            this->timestamp.push_back( player->position() );
             //this->update();
-            showPopUp();
+            showAddNotesModal();
         }
-
     }
 
 //    else if(!vis->categories.size()==0 && event->button() == Qt::RightButton){
@@ -1853,41 +1851,43 @@ void videodrawer::paintEvent(QPaintEvent *event)
              font.setPointSize(18);
              painter.setPen(font_color);
              painter.setFont(font);
-             painter.drawText(QPoint(points[index_note].x(),points[index_note].y()-5), vis->videolog[index_note].note);
+             //TODO
+             //painter.drawText(QPoint(points[index_note].x(),points[index_note].y()-5), vis->videolog[index_note].note);
         }
 
     }
 }
 
-void videodrawer::showPopUp(){
+void videodrawer::showAddNotesModal(){
 
-    QVBoxLayout *layout = new QVBoxLayout();
+    QVBoxLayout *addNotesModal = new QVBoxLayout();
     widget = new QWidget();
-    widget->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+    widget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    text = new QPlainTextEdit();
-    text->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    text->setPlaceholderText("ADD NOTES");
-    text->setFixedHeight(widget->height()/6);
+    QPlainTextEdit *addNotesLabel = new QPlainTextEdit();
+    addNotesLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    addNotesLabel->setPlaceholderText( "ADD NOTES" );
+    addNotesLabel->setFixedHeight( widget->height()/6 );
     //text->setFixedWidth(widget->width()/5);
 
-    QPushButton *button = new QPushButton("Add Note");
-    button->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    setButtonStyle_ok(button);
+    QPushButton *addNoteButton = new QPushButton("Add Note");
+    addNoteButton->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
+    setButtonStyle_ok( addNoteButton );
 
-    layout->addWidget(text);
-    layout->addWidget(button);
+    addNotesModal->addWidget( addNotesLabel );
+    addNotesModal->addWidget( addNoteButton );
 
-    widget->setLayout(layout);
+    widget->setLayout( addNotesModal );
     widget->show();
 
-    connect(button, SIGNAL(clicked(bool)), this, SLOT(addNote()));
+    connect( addNoteButton, SIGNAL( clicked( bool ) ), this, SLOT( addNote() ) );
 }
 
 void videodrawer::addNote(){
 
     setMouseTracking(false);
-    vis->updateLog(player->position(),point.x(),point.y(),text->toPlainText());
+    //TODO
+    //vis->updateLog(player->position(),point.x(),point.y(),text->toPlainText());
     widget->close();
     setMouseTracking(true);
 }

@@ -64,10 +64,10 @@ class videodrawer: public QWidget
 {
     Q_OBJECT
 public:
-    explicit videodrawer(class MainApp *v,QWidget *parent = 0);
+    explicit videodrawer(class MainApp *v, QWidget *parent = 0);
 
     //functions
-    void showPopUp();
+    void showAddNotesModal();
 
     //variables
     QMediaPlayer *player;
@@ -77,7 +77,7 @@ public:
     vector <QColor> colors;
     QColor c;
 
-    int minTimestamp,maxTimestamp;
+    int minTimestamp, maxTimestamp;
     int index_note;
 
     class MainApp *vis;
